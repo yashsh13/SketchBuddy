@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { userMiddleware } from "../middlewares/userMiddlewares";
+import { userMiddleware } from "../middlewares/userMiddlewares.js";
 
 const roomRouter = Router();
 

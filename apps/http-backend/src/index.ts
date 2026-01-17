@@ -1,6 +1,6 @@
 import express from "express";
-import userRouter from "./routes/userRoutes";
-import roomRouter from "./routes/roomRoutes";
+import userRouter from "./routes/userRoutes.js";
+import roomRouter from "./routes/roomRoutes.js";
 
 const app = express();
 
