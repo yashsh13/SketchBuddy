@@ -5,14 +5,14 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "@repo/backend-common/config";
 
-const userRouter = Router();
+const userRouter: Router = Router();
 
 userRouter.post('/signup',async (req,res)=>{
     try{
         const parsedBody = signUpSchema.safeParse(req.body);
 
         if(!parsedBody.success){
-            return res.status(403).json({
+            return res.status(400).json({
                 message:"Zod Error",
                 error:parsedBody.error
             })
@@ -22,11 +22,11 @@ userRouter.post('/signup',async (req,res)=>{
 
         await prismaClient.user.create({
             data:{
-                username:parsedBody.data.username,
+                email:parsedBody.data.email,
                 password:hashedPassword,
-                email:parsedBody.data.email
+                username: parsedBody.data.username
             }
-        })
+        });
 
         return res.json({
             message:"Signed Up Successfully"
@@ -34,6 +34,7 @@ userRouter.post('/signup',async (req,res)=>{
 
 
     } catch (e){
+        console.log(e);
         return res.status(500).json({
             message:"Error occured in signup endpoint: "+e
         })
@@ -45,7 +46,7 @@ userRouter.post('/login',async (req,res)=>{
         const parsedBody = logInSchema.safeParse(req.body);
 
         if(!parsedBody.success){
-            return res.status(403).json({
+            return res.status(400).json({
                 message:"Zod error",
                 error:parsedBody.error
             })
@@ -53,10 +54,10 @@ userRouter.post('/login',async (req,res)=>{
 
         const user = await prismaClient.user.findFirst({
                 where:{
-                    username: parsedBody.data.email
+                    email: parsedBody.data.email
                 }
             })
-
+        
         if(!user){
             return res.status(401).json({
                 message:"User with this email does not exist"
@@ -72,7 +73,7 @@ userRouter.post('/login',async (req,res)=>{
         }
 
         const token = jwt.sign({
-            userid: user.id
+            userId: user.id
         },JWT_SECRET);
 
         return res.json({
@@ -87,4 +88,4 @@ userRouter.post('/login',async (req,res)=>{
     }
 })
 
-export default userRouter as Router;
+export default userRouter;

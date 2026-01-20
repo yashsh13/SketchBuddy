@@ -10,3 +10,7 @@ export const logInSchema = z.object({
     email: z.email(),
     password: z.string().min(3).max(20)
 })
+
+export const createRoomSchema = z.object({
+    slug: z.string().min(3).max(20)
+})

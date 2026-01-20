@@ -3,19 +3,25 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { JWT_SECRET } from "@repo/backend-common/config";
 
 export const userMiddleware = (req: Request,res: Response,next: NextFunction) =>{
-    const authorization = req.headers.authorization;
-    const token = authorization?.split(' ')[1];
+    try{
+        const authorization = req.headers.authorization;
+        const token = authorization?.split(' ')[1];
 
-    const decoded = jwt.verify(token as string,JWT_SECRET);
+        const decoded = jwt.verify(token as string,JWT_SECRET);
+        
+        if(decoded){
+            //@ts-ignore
+            req.id = (decoded as JwtPayload).userId;
+            return next();
+        }
 
-    if(decoded){
-        //@ts-ignore
-        req.id = (decoded as JwtPayload).userId;
-        return next();
+        return res.status(403).json({
+                message:"Unauthorized"
+            });
+
+    } catch(e) {
+        return res.status(500).json({
+            message:"User Middleware error"
+        })
     }
-
-    return res.status(403).json({
-            message:"Unauthorized"
-        });
-
 }
