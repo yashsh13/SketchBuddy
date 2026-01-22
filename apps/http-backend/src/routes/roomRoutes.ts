@@ -37,4 +37,52 @@ roomRouter.post('/create',userMiddleware,async (req,res)=>{
     }
 })
 
+roomRouter.get('/chats/:roomid', userMiddleware, async (req,res)=>{
+    try{
+        const roomId = Number(req.params.roomid);
+
+        const chats = await prismaClient.chat.findMany({
+            where:{
+                roomid: roomId
+            },
+            orderBy: {
+                sentTime: 'desc'
+            },
+            take:50
+        })
+
+        return res.json({
+            message: "Fetched all the chats",
+            chats
+        })
+
+    } catch (e){
+        return res.status(500).json({
+            message: "Get chats error: "+e,
+        })
+    }
+})
+
+roomRouter.get('/:slug', userMiddleware, async(req,res)=>{
+    try{
+        const slug = String(req.params.slug);
+
+        const room = await prismaClient.room.findFirst({
+            where:{
+                slug: slug
+            }
+        })
+
+        return res.json({
+            message: "Fetched the room id",
+            roomId: room?.id
+        })
+
+    } catch(e){
+        return res.status(500).json({
+            message: "Getting Room ID error: "+e
+        })
+    }
+})
+
 export default roomRouter;
