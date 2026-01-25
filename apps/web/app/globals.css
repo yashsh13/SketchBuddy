@@ -1,50 +1,25 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@import url('https://fonts.googleapis.com/css2?family=Fuzzy+Bubbles:wght@400;700&family=Manrope:wght@200..800&display=swap');
+
+@import "tailwindcss";
+
+@source "../../../packages/ui";
+
+@theme {
+  --font-cartoon: "Fuzzy Bubbles", sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  --font-manrope: "Manrope", sans-serif;
 }
 
-html,
+@theme {
+  --color-cream: #FFFBF0;
+}
+
+@theme {
+  --color-dark-cream: #705400;
+}
+
 body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-.imgDark {
-  display: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-
-  .imgLight {
-    display: none;
-  }
-  .imgDark {
-    display: unset;
-  }
+  font-family: "Manrope", sans-serif;
 }
