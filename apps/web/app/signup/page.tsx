@@ -1,5 +1,7 @@
+import AuthBody from "@repo/ui/components/AuthBody";
+
 export default function Signup(){
     return (
-        <div></div>
+        <AuthBody type={"signup"} />
     )
 }

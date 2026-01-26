@@ -6,7 +6,7 @@ interface ButtonProps {
   size: "fit" | "full"
 }
 
-const defaultStyles = "text-xl px-4 py-2 border border-dark-cream cursor-pointer";
+const defaultStyles = "text-lg px-4 py-2 border border-dark-cream cursor-pointer";
 
 const customStyles = {
   "primary": "bg-dark-cream text-white hover:text-dark-cream hover:bg-white",
