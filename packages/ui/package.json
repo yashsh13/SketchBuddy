@@ -4,7 +4,8 @@
   "private": true,
   "exports": {
     "./components/*": "./src/components/*.tsx",
-    "./icons/*": "./src/icons/*.tsx"
+    "./icons/*": "./src/icons/*.tsx",
+    "./draw/*": "./src/draw/*.ts"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
