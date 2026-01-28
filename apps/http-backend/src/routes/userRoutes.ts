@@ -54,13 +54,13 @@ userRouter.post('/login',async (req,res)=>{
 
         const user = await prismaClient.user.findFirst({
                 where:{
-                    email: parsedBody.data.email
+                    username: parsedBody.data.username
                 }
             })
         
         if(!user){
             return res.status(401).json({
-                message:"User with this email does not exist"
+                message:"User with this username does not exist"
             })
         }
 

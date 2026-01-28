@@ -2,11 +2,12 @@
   "name": "@repo/common",
   "version": "1.0.0",
   "main": "index.js",
-  "exports":{
-    "./zodSchema":"./src/zodSchema.ts"
+  "exports": {
+    "./zodSchema": "./src/zodSchema.ts",
+    "./config": "./src/config.ts"
   },
   "scripts": {
-    "build":"tsc -b"
+    "build": "tsc -b"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*"
@@ -16,6 +17,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@types/node": "^22.15.3",
     "zod": "^4.3.5"
   }
 }
