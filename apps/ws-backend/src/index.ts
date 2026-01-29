@@ -99,9 +99,11 @@ wss.on("connection",async (ws,request)=>{
                 const peopleInRoom = Users.filter(x => x.rooms.includes(parsedData.roomId));
                 
                 peopleInRoom.forEach(x => {
-                    x.ws.send(JSON.stringify({
-                        message: parsedData.message
-                    }))
+                    if(x.ws !== ws){
+                        x.ws.send(JSON.stringify({
+                            message: parsedData.message
+                        }));
+                    }
                 })
             } catch (e) {
                 console.log("Sending Chat Error: "+e);

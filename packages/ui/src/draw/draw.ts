@@ -1,3 +1,6 @@
+import { BACKEND_URL } from "@repo/common/config";
+import axios from "axios";
+
 type Shape = {
     type:'Rectangle',
     x: number,
@@ -11,17 +14,24 @@ type Shape = {
     radius: number
 };
 
-export function initDraw(canvas: HTMLCanvasElement ){
+export async function initDraw(canvas: HTMLCanvasElement, roomId: number, ws: WebSocket ){
     
-    let existingShapes: Shape[] = [];
+    let existingShapes: Shape[] = await getExistingShapes(roomId);
+
     const ctx = canvas.getContext('2d');
 
     if(!ctx){
         return 
     }
 
-    ctx.fillStyle = '#FFFBF0';
-    ctx.fillRect(0,0,canvas.width,canvas.height);
+    clearCanvas(canvas,ctx,existingShapes);
+
+    ws.onmessage = (event) =>{
+        const parsedData = JSON.parse(event.data);
+        console.log(parsedData.message);
+        existingShapes.push(parsedData.message);
+        clearCanvas(canvas,ctx,existingShapes);
+    };
 
     let startX = 0;
     let startY = 0;
@@ -49,13 +59,21 @@ export function initDraw(canvas: HTMLCanvasElement ){
         let width = e.pageX - startX;
         let height = e.pageY - startY;
 
-        existingShapes.push({
+        const shape: Shape = ({
             type: 'Rectangle',
             x: startX,
             y: startY,
             width,
             height
-        })
+        });
+
+        existingShapes.push(shape);
+
+        ws.send(JSON.stringify({
+            type:'chat',
+            roomId,
+            message: JSON.stringify(shape)
+        }))
     })
 }
 
@@ -71,4 +89,16 @@ function clearCanvas(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, e
             ctx.strokeRect(shape.x,shape.y,shape.width,shape.height);
         }
     })
+}
+
+async function getExistingShapes(roomId: number){
+    try{
+        const response = await axios.get(`${BACKEND_URL}/api/v1/room/chats/${roomId}`);
+
+        console.log(response.data.message);
+
+        return response.data.shapes
+    }catch (e){
+        console.log('Getting existing shapes error: '+e);
+    }
 }

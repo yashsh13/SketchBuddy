@@ -1,15 +1,18 @@
 'use client';
 import { useEffect, useRef } from "react";
-import { initDraw } from "@repo/ui/draw/draw"
+import { initDraw } from "../draw/draw";
 
-export default function Canvas(){
+export default function CanvasBody({ roomId, ws }:{
+    roomId: number,
+    ws: WebSocket
+}){
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     useEffect(()=>{
 
         if(canvasRef.current){
-            initDraw(canvasRef.current);
+            initDraw(canvasRef.current, roomId, ws);
         }
 
     },[canvasRef]

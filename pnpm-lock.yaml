@@ -60,12 +60,18 @@ importers:
 
   apps/web:
     dependencies:
+      '@repo/common':
+        specifier: workspace:*
+        version: link:../../packages/common
       '@repo/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       '@tailwindcss/postcss':
         specifier: ^4.1.18
         version: 4.1.18
+      axios:
+        specifier: ^1.13.4
+        version: 1.13.4
       next:
         specifier: 16.1.0
         version: 16.1.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0)

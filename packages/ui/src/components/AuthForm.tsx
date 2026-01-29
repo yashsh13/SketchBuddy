@@ -44,6 +44,7 @@ export default function AuthForm({ type }:{ type: string }){
             //@ts-ignore
             console.log(response.data.message);
             localStorage.setItem('token',"Bearer "+response.data.token);
+            localStorage.setItem('userId',response.data.userId);
             router.push('/dashboard');
         } catch(e){
             console.log('LogIn request error: '+e);

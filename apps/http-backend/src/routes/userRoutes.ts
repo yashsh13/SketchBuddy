@@ -78,7 +78,8 @@ userRouter.post('/login',async (req,res)=>{
 
         return res.json({
             message: "Logged in successfully",
-            token : token
+            token: token,
+            userId: user.id 
         })
 
     } catch (e){
