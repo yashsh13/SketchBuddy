@@ -1,5 +1,6 @@
-import { BACKEND_URL } from "@repo/common/config";
-import axios from "axios";
+import { getExistingShapes } from "./http";
+
+type Tool = 'None' | 'Line' |'Rectangle' | "Circle";
 
 type Shape = {
     type:'Rectangle',
@@ -9,96 +10,153 @@ type Shape = {
     height: number
 } | {
     type: 'Circle',
-    x: number,
-    y: number,
+    centerX: number,
+    centerY: number,
     radius: number
 };
 
-export async function initDraw(canvas: HTMLCanvasElement, roomId: number, ws: WebSocket ){
-    
-    let existingShapes: Shape[] = await getExistingShapes(roomId);
+export default class Draw {
+    private canvas: HTMLCanvasElement
+    private ctx: CanvasRenderingContext2D
+    private existingShapes: Shape[]
+    private roomId: number
+    private mouseClicked: boolean
+    private startX: number
+    private startY: number
+    private ws: WebSocket
+    private tool: Tool
 
-    const ctx = canvas.getContext('2d');
+    constructor(canvas: HTMLCanvasElement, roomId: number, ws: WebSocket, tool: Tool){
+        this.canvas = canvas;
+        this.ctx = canvas.getContext('2d')!;
+        this.existingShapes = [];
+        this.roomId = roomId;
+        this.mouseClicked = false;
+        this.startX = 0;
+        this.startY = 0;
+        this.ws = ws;
+        this.tool = 'None';
 
-    if(!ctx){
-        return 
+        this.init();
+        this.initWS();
+        this.initMouseHandlers();
     }
 
-    clearCanvas(canvas,ctx,existingShapes);
+    async init(){
+        this.existingShapes = await getExistingShapes(this.roomId);
+        this.clearCanvas();
+    }
 
-    ws.onmessage = (event) =>{
-        const parsedData = JSON.parse(event.data);
-        console.log(parsedData.message);
-        existingShapes.push(parsedData.message);
-        clearCanvas(canvas,ctx,existingShapes);
-    };
+    initWS(){
+        console.log('supp');
+        this.ws.onmessage = (event) =>{
+            const parsedData = JSON.parse(event.data);
+            this.existingShapes.push(JSON.parse(parsedData.message));
+            this.clearCanvas();
+        };
+    }
 
-    let startX = 0;
-    let startY = 0;
-    let start = false;
+    clearCanvas(){
+        this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
+        this.ctx.fillStyle = '#FFFBF0';
+        this.ctx.fillRect(0,0,this.canvas.width,this.canvas.height);
+        
+        this.existingShapes.forEach(shape => {
+            if(shape.type == 'Rectangle'){
+                this.ctx.strokeStyle = '#705400';
+                this.ctx.strokeRect(shape.x,shape.y,shape.width,shape.height);
+            } else if ( shape.type == 'Circle'){
+                this.ctx.beginPath();
+                this.ctx.arc(shape.centerX, shape.centerY, Math.abs(shape.radius), 0, Math.PI*2);
+                this.ctx.stroke();
+                this.ctx.closePath();
+            }
+        })
+    }
 
-    canvas.addEventListener('mousedown',(e)=>{
-        start = true;
-        startX = e.pageX;
-        startY = e.pageY;
-    })
+    mouseDownEvent = (e: MouseEvent) =>{
+        this.mouseClicked = true;
+        this.startX = e.pageX;
+        this.startY = e.pageY;
+    }
 
-    canvas.addEventListener('mousemove',(e)=>{
-        if(start){
-            let width = e.pageX - startX;
-            let height = e.pageY - startY;
-            
-            clearCanvas(canvas,ctx,existingShapes);
-            ctx.strokeStyle = '#705400';
-            ctx.strokeRect(startX,startY,width,height);
+    mouseMoveEvent = (e: MouseEvent) =>{
+        if(this.mouseClicked){
+
+            this.clearCanvas();
+            let width = e.pageX - this.startX;
+            let height = e.pageY - this.startY;
+
+            if(this.tool == 'Rectangle'){
+                this.ctx.strokeStyle = '#705400';
+                this.ctx.strokeRect(this.startX,this.startY,width,height);
+
+            } else if (this.tool == 'Circle'){
+                const radius = Math.max(width,height)/2;
+                const centerX = this.startX + radius;
+                const centerY = this.startY + radius;
+                this.ctx.strokeStyle = '#705400';
+                this.ctx.beginPath();
+                this.ctx.arc(centerX, centerY, Math.abs(radius), 0, Math.PI*2);
+                this.ctx.stroke();
+                this.ctx.closePath();
+
+            }
         }
-    })
+    }
 
-    canvas.addEventListener('mouseup',(e)=>{
-        start = false;
-        let width = e.pageX - startX;
-        let height = e.pageY - startY;
+    mouseUpEvent = (e: MouseEvent) =>{
+        this.mouseClicked = false;
+        let width = e.pageX - this.startX;
+        let height = e.pageY - this.startY;
 
-        const shape: Shape = ({
-            type: 'Rectangle',
-            x: startX,
-            y: startY,
-            width,
-            height
-        });
+        let shape: Shape;
 
-        existingShapes.push(shape);
+        if(this.tool == 'Rectangle'){
+            shape = ({
+                type: 'Rectangle',
+                x: this.startX,
+                y: this.startY,
+                width,
+                height
+            });
 
-        ws.send(JSON.stringify({
+        } else if( this.tool == 'Circle'){
+            const radius = Math.max(width,height)/2;
+            shape = ({
+                type: 'Circle',
+                radius,
+                centerX: this.startX + radius,
+                centerY: this.startY + radius
+            })
+
+        } else {
+            return
+        }
+
+        this.existingShapes.push(shape);
+
+        this.ws.send(JSON.stringify({
             type:'chat',
-            roomId,
+            roomId: this.roomId,
             message: JSON.stringify(shape)
         }))
-    })
-}
-
-function clearCanvas(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, existingShapes: Shape[]){
-
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle = '#FFFBF0';
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-
-    existingShapes.forEach(shape => {
-        if(shape.type == 'Rectangle'){
-            ctx.strokeStyle = '#705400';
-            ctx.strokeRect(shape.x,shape.y,shape.width,shape.height);
-        }
-    })
-}
-
-async function getExistingShapes(roomId: number){
-    try{
-        const response = await axios.get(`${BACKEND_URL}/api/v1/room/chats/${roomId}`);
-
-        console.log(response.data.message);
-
-        return response.data.shapes
-    }catch (e){
-        console.log('Getting existing shapes error: '+e);
     }
+
+    initMouseHandlers(){
+        this.canvas.addEventListener('mousedown', this.mouseDownEvent);
+        this.canvas.addEventListener('mousemove',this.mouseMoveEvent);
+        this.canvas.addEventListener('mouseup',this.mouseUpEvent);
+    }
+
+    removeMouseHandlers(){
+        this.canvas.removeEventListener('mousedown', this.mouseDownEvent);
+        this.canvas.removeEventListener('mousemove',this.mouseMoveEvent);
+        this.canvas.removeEventListener('mouseup',this.mouseUpEvent);
+    }
+
+    setTool(tool: Tool){
+        this.tool = tool;
+    }
+    
 }

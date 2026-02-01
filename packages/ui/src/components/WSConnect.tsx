@@ -16,11 +16,10 @@ export default function WSConnect({ roomId }:{
             setWS(ws);
             ws.send(JSON.stringify({
                 type:'join_room',
-                roomId,
-                userId
+                roomId
             }))
         };
-
+        
     },[])
 
     if(!ws){

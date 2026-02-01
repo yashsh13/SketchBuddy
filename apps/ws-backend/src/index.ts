@@ -31,7 +31,7 @@ async function Auth(token: string){
 }
 
 wss.on("connection",async (ws,request)=>{
-
+    
     const url = request.url;
     if(!url){
         ws.close();
