@@ -13,6 +13,12 @@ type Shape = {
     centerX: number,
     centerY: number,
     radius: number
+} | {
+    type: 'Line',
+    startX: number,
+    startY: number,
+    endX: number,
+    endY: number
 };
 
 export default class Draw {
@@ -60,16 +66,21 @@ export default class Draw {
         this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
         this.ctx.fillStyle = '#FFFBF0';
         this.ctx.fillRect(0,0,this.canvas.width,this.canvas.height);
-        
+        this.ctx.strokeStyle = '#705400';
+
         this.existingShapes.forEach(shape => {
             if(shape.type == 'Rectangle'){
-                this.ctx.strokeStyle = '#705400';
                 this.ctx.strokeRect(shape.x,shape.y,shape.width,shape.height);
             } else if ( shape.type == 'Circle'){
                 this.ctx.beginPath();
                 this.ctx.arc(shape.centerX, shape.centerY, Math.abs(shape.radius), 0, Math.PI*2);
                 this.ctx.stroke();
                 this.ctx.closePath();
+            } else if ( shape.type == 'Line'){
+                this.ctx.beginPath();
+                this.ctx.moveTo(shape.startX,shape.startY);
+                this.ctx.lineTo(shape.endX,shape.endY)
+                this.ctx.stroke();
             }
         })
     }
@@ -86,21 +97,26 @@ export default class Draw {
             this.clearCanvas();
             let width = e.pageX - this.startX;
             let height = e.pageY - this.startY;
+            this.ctx.strokeStyle = '#705400';
 
             if(this.tool == 'Rectangle'){
-                this.ctx.strokeStyle = '#705400';
                 this.ctx.strokeRect(this.startX,this.startY,width,height);
 
             } else if (this.tool == 'Circle'){
                 const radius = Math.max(width,height)/2;
                 const centerX = this.startX + radius;
                 const centerY = this.startY + radius;
-                this.ctx.strokeStyle = '#705400';
+    
                 this.ctx.beginPath();
                 this.ctx.arc(centerX, centerY, Math.abs(radius), 0, Math.PI*2);
                 this.ctx.stroke();
                 this.ctx.closePath();
 
+            } else if ( this.tool == 'Line'){
+                this.ctx.beginPath();
+                this.ctx.moveTo(this.startX,this.startY);
+                this.ctx.lineTo(e.pageX,e.pageY)
+                this.ctx.stroke();
             }
         }
     }
@@ -113,22 +129,31 @@ export default class Draw {
         let shape: Shape;
 
         if(this.tool == 'Rectangle'){
-            shape = ({
+            shape = {
                 type: 'Rectangle',
                 x: this.startX,
                 y: this.startY,
                 width,
                 height
-            });
+            };
 
         } else if( this.tool == 'Circle'){
             const radius = Math.max(width,height)/2;
-            shape = ({
+            shape = {
                 type: 'Circle',
                 radius,
                 centerX: this.startX + radius,
                 centerY: this.startY + radius
-            })
+            }
+
+        } else if (this.tool == 'Line') {
+            shape = {
+                type: 'Line',
+                startX: this.startX,
+                startY: this.startY,
+                endX: e.pageX,
+                endY: e.pageY
+            }
 
         } else {
             return
