@@ -3,7 +3,7 @@ import { ReactElement } from "react"
 interface InputFieldProps{
     placeholder: string,
     icon?: ReactElement,
-    reference: any
+    reference?: any
 }
 
 export default function InputField({ placeholder, icon, reference }: InputFieldProps){
