@@ -4,6 +4,7 @@ import { signUpSchema, logInSchema } from "@repo/common/zodSchema";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "@repo/backend-common/config";
+import { userMiddleware } from '../middlewares/userMiddlewares';
 
 const userRouter: Router = Router();
 
@@ -75,17 +76,50 @@ userRouter.post('/login',async (req,res)=>{
         const token = jwt.sign({
             userId: user.id
         },JWT_SECRET);
-
-        return res.json({
+        
+        return res.cookie('token','Bearer '+token).json({
             message: "Logged in successfully",
             token: token,
             userId: user.id 
-        })
+        });
 
     } catch (e){
         return res.status(500).json({
             message:"Error occured in Login endpoint: "+e
         })   
+    }
+})
+
+userRouter.get('/name', userMiddleware, async (req,res)=>{
+    try{
+        //@ts-ignore
+        const userId = req.id;
+
+        const userInfo = await prismaClient.user.findFirst({
+            where:{
+                id: userId
+            },
+            select:{
+                username: true
+            }
+        })
+
+        if(!userInfo){
+            return res.status(403).json({
+                message: 'User does not exist'
+            })
+        }
+
+        return res.json({
+            message: "Fetched Username",
+            username: userInfo.username
+        })
+
+    }catch (e){
+        return res.status(500).json({
+            message: 'Error in fetching username',
+            error: e
+        })
     }
 })
 

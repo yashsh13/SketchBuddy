@@ -4,7 +4,8 @@ interface ButtonProps {
   text: string,
   variant: "primary" | "secondary",
   size: "fit" | "full",
-  onClickHandler?: ()=>void
+  onClickHandler?: ()=>void,
+  disabledState?: boolean
 }
 
 const defaultStyles = "text-lg border border-dark-cream cursor-pointer shadow-lg";
@@ -19,9 +20,9 @@ const sizeStyle = {
   "fit": "rounded-md p-2"
 }
 
-export default function Button ({ text, variant, size, onClickHandler }: ButtonProps) {
+export default function Button ({ text, variant, size, onClickHandler,disabledState }: ButtonProps) {
   return (
-    <button onClick={onClickHandler} className={`${defaultStyles} ${customStyles[variant]} ${sizeStyle[size]}`}>
+    <button onClick={onClickHandler} className={`${defaultStyles} ${customStyles[variant]} ${sizeStyle[size]}`} disabled={disabledState}>
       {text}
     </button>
   );

@@ -8,19 +8,23 @@ export default function WSConnect({ roomId }:{
 }){
     const [ws,setWS] = useState<WebSocket | null>(null);
 
-    useEffect(()=>{
-        const ws = new WebSocket(`${WS_URL}?token=${localStorage.getItem('token')?.split(' ')[1]}`);
-        const userId = localStorage.getItem('userId');
-        console.log(userId);
-        ws.onopen = (event)=>{
-            setWS(ws);
-            ws.send(JSON.stringify({
-                type:'join_room',
-                roomId
-            }))
-        };
+    async function connectWS(){
+        const token = await cookieStore.get('token');
         
-    },[])
+        const ws = new WebSocket(`${WS_URL}?token=${(token?.value)?.split('%20')[1]}`);
+
+        ws.onopen = (event)=>{
+                    setWS(ws);
+                    ws.send(JSON.stringify({
+                        type:'join_room',
+                        roomId
+                    }
+                    ))};
+    }
+
+    useEffect(()=>{
+        connectWS();
+    },[]);
 
     if(!ws){
         return<div>

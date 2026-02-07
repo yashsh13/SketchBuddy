@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import InputField from "./InputField";
 import UserIcon from "../icons/UserIcon";
 import MailIcon from "../icons/Mail-Icon";
@@ -10,14 +10,17 @@ import axios from "axios";
 import { BACKEND_URL } from "@repo/common/config";
 import { useRouter } from "next/navigation";
 
+
 export default function AuthForm({ type }:{ type: string }){
     const usernameRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
     const emailRef = useRef<HTMLInputElement>(null);
     const router = useRouter();
+    const [loading,setLoading] = useState(false);
 
     async function signUpHandler(){
         try{
+            setLoading(true);
             const response = await axios.post(`${BACKEND_URL}/api/v1/user/signup`,
                 {
                     username: usernameRef.current?.value,
@@ -35,16 +38,18 @@ export default function AuthForm({ type }:{ type: string }){
     
     async function logInHandler(){
         try{
+            setLoading(true);
             const response = await axios.post(`${BACKEND_URL}/api/v1/user/login`,
                 {
                     username: usernameRef.current?.value,
                     password: passwordRef.current?.value
+                },
+                {
+                    withCredentials: true
                 }
             )
             //@ts-ignore
             console.log(response.data.message);
-            localStorage.setItem('token',"Bearer "+response.data.token);
-            localStorage.setItem('userId',response.data.userId);
             router.push('/dashboard');
         } catch(e){
             console.log('LogIn request error: '+e);
@@ -60,7 +65,8 @@ export default function AuthForm({ type }:{ type: string }){
                 <InputField placeholder={"Password"} icon={<KeyIcon />} reference={passwordRef}/>
             </div>
             <div className="w-full px-3">
-                <Button text={"Submit"} variant={"primary"} size={"full"} onClickHandler={(type=='signup')?signUpHandler:logInHandler}/>
+                {!loading&&<Button text={"Submit"} variant={"primary"} size={"full"} onClickHandler={(type=='signup')?signUpHandler:logInHandler} disabledState={loading} />}
+                {loading&&<p className="text-center">Loading . . .</p>}
             </div>
         </div>  
     )

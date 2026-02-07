@@ -11,8 +11,6 @@
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
-    "@repo/common": "workspace:*",
-    "@repo/ui": "workspace:*",
     "@tailwindcss/postcss": "^4.1.18",
     "axios": "^1.13.4",
     "next": "16.1.0",
@@ -22,11 +20,14 @@
     "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
+    "@repo/common": "workspace:*",
+    "@repo/ui": "workspace:*",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^22.15.3",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
+    "@repo/redux":"workspace:*",
     "eslint": "^9.39.1",
     "typescript": "5.9.2"
   }

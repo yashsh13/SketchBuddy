@@ -37,7 +37,7 @@ roomRouter.post('/create',userMiddleware,async (req,res)=>{
     }
 })
 
-roomRouter.get('/chats/:roomid', async (req,res)=>{
+roomRouter.get('/chats/:roomid',userMiddleware, async (req,res)=>{
     try{
         const roomId = Number(req.params.roomid);
 
@@ -66,10 +66,10 @@ roomRouter.get('/chats/:roomid', async (req,res)=>{
     }
 })
 
-roomRouter.get('/:slug', async(req,res)=>{
+roomRouter.get('/id/:slug', userMiddleware, async(req,res)=>{
     try{
         const slug = String(req.params.slug);
-
+    
         const room = await prismaClient.room.findFirst({
             where:{
                 slug: slug
@@ -84,6 +84,21 @@ roomRouter.get('/:slug', async(req,res)=>{
     } catch(e){
         return res.status(500).json({
             message: "Getting Room ID error: "+e
+        })
+    }
+})
+
+roomRouter.get('/all', userMiddleware, async (req,res)=>{
+    try{
+        const rooms = await prismaClient.room.findMany();
+
+        return res.json({
+            message: "Fetched all the rooms",
+            rooms: rooms
+        })
+    }catch (e){
+        return res.status(500).json({
+            message: "Error in fetching all the rooms: "+e
         })
     }
 })

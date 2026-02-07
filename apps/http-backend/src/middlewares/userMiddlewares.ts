@@ -4,12 +4,14 @@ import { JWT_SECRET } from "@repo/backend-common/config";
 
 export const userMiddleware = (req: Request,res: Response,next: NextFunction) =>{
     try{
-        const authorization = req.headers.authorization;
-        const token = authorization?.split(' ')[1];
-
+        
+        const bearer = req.cookies.token;
+        const token = bearer?.split(' ')[1];
+        
         const decoded = jwt.verify(token as string,JWT_SECRET);
         
         if(decoded){
+            
             //@ts-ignore
             req.id = (decoded as JwtPayload).userId;
             return next();

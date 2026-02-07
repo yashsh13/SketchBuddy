@@ -1,6 +1,7 @@
 import AuthForm from './AuthForm';
 
 export default function AuthBody({ type }: { type: string }){
+    
     return(
         <div className="h-screen w-screen bg-cream">
             <p className="font-cartoon text-dark-cream font-bold text-6xl text-center py-10">SketchBuddy</p>

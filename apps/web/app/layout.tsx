@@ -1,4 +1,7 @@
+'use client'
+
 import "./globals.css";
+import ReduxProvider from "@repo/redux/provider"; 
 
 export default function RootLayout({
   children,
@@ -6,10 +9,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body >
-        {children}
-      </body>
-    </html>
+    <ReduxProvider>
+      <html lang="en">
+        <body >
+          {children}
+        </body>
+      </html>
+    </ReduxProvider>
   );
 }

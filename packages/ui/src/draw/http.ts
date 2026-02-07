@@ -4,7 +4,9 @@ import axios from "axios";
 
 export async function getExistingShapes(roomId: number){
     try{
-        const response = await axios.get(`${BACKEND_URL}/api/v1/room/chats/${roomId}`);
+        const response = await axios.get(`${BACKEND_URL}/api/v1/room/chats/${roomId}`,
+            {withCredentials: true}
+        );
 
         console.log(response.data.message);
 

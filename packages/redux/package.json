@@ -1,0 +1,24 @@
+{
+  "name": "@repo/redux",
+  "version": "1.0.0",
+  "main": "index.js",
+  "exports": {
+    "./provider": "./src/provider.tsx",
+    "./slices/isVisible": "./src/slices/isVisible.ts"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.11.2",
+    "@types/react": "19.2.2",
+    "react-redux": "^9.2.0"
+  }
+}
