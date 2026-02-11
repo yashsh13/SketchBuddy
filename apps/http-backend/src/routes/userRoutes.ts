@@ -44,6 +44,7 @@ userRouter.post('/signup',async (req,res)=>{
 
 userRouter.post('/login',async (req,res)=>{
     try{
+        console.log("Hiii");
         const parsedBody = logInSchema.safeParse(req.body);
 
         if(!parsedBody.success){
