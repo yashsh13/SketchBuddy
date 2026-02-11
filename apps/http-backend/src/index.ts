@@ -6,7 +6,7 @@ import cookieParser from "cookie-parser";
 import { FRONTEND_URL } from "@repo/common/config";
 
 const app = express();
-
+console.log(FRONTEND_URL);
 app.use(cors(
     {
         credentials: true,
