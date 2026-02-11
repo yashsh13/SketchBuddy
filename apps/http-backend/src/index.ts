@@ -3,13 +3,14 @@ import userRouter from "./routes/userRoutes.js";
 import roomRouter from "./routes/roomRoutes.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { FRONTEND_URL } from "@repo/common/config";
 
 const app = express();
 
 app.use(cors(
     {
         credentials: true,
-        origin: 'http://localhost:3000'
+        origin: FRONTEND_URL
         }
 ));
 app.use(express.json());

@@ -7,7 +7,7 @@ import MailIcon from "../icons/Mail-Icon";
 import KeyIcon from "../icons/KeyIcon";
 import Button from "./Button";
 import axios from "axios";
-import { BACKEND_URL } from "@repo/common/config";
+import { BACKEND_URL, FRONTEND_URL } from "@repo/common/config";
 import { useRouter } from "next/navigation";
 
 
@@ -39,6 +39,8 @@ export default function AuthForm({ type }:{ type: string }){
     async function logInHandler(){
         try{
             setLoading(true);
+            console.log(BACKEND_URL);
+            console.log(FRONTEND_URL);
             const response = await axios.post(`${BACKEND_URL}/api/v1/user/login`,
                 {
                     username: usernameRef.current?.value,
