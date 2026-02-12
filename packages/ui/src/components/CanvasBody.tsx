@@ -3,6 +3,9 @@ import { useEffect, useRef, useState } from "react";
 import Draw from "../draw/draw";
 import ToolButton from "./ToolButton";
 import { Circle, MousePointer, RectangleHorizontal, Slash } from "lucide-react";
+import Button from "./Button";
+import LeftArrowIcon from "../icons/LeftArrowIcon";
+import { useRouter } from "next/navigation";
 
 export default function CanvasBody({ roomId, ws }:{
     roomId: number,
@@ -12,6 +15,7 @@ export default function CanvasBody({ roomId, ws }:{
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [tool,setTool] = useState<'None' | 'Line' |'Rectangle' | "Circle">('None');
     const [draw,setDraw] = useState<Draw>();
+    const router = useRouter();
 
     useEffect(()=>{
         draw?.setTool(tool);
@@ -32,6 +36,9 @@ export default function CanvasBody({ roomId, ws }:{
 )
     return(
         <div className="overflow-hidden w-screen h-screen">
+            <div className="fixed top-4 left-10">
+                <Button text={"Back"} variant={"secondary"} size={"fit"} icon={<LeftArrowIcon />} onClickHandler={()=>router.push('/dashboard')}/>
+            </div>
             <div className="fixed top-3 left-170 border-2 border-dark-cream rounded-md bg-white flex justify-center items-center gap-2 p-3 shadow-xl">
                 <ToolButton icon={<MousePointer />} selected={tool == 'None'} onClickHandler={()=>setTool('None')} />
                 <ToolButton icon={<Slash />} selected={tool == 'Line'} onClickHandler={()=>setTool('Line')} />

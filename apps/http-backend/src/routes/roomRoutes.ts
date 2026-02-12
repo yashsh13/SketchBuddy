@@ -103,4 +103,29 @@ roomRouter.get('/all', userMiddleware, async (req,res)=>{
     }
 })
 
+roomRouter.get('/search/:startsWith', userMiddleware, async (req,res)=>{
+    try{
+        const startsWith = req.params.startsWith;
+        
+        const rooms = await prismaClient.room.findMany({
+            where:{
+                slug:{
+                    startsWith: startsWith as string,
+                    mode: 'insensitive'
+                }
+            }
+        })
+        
+        return res.json({
+            message: "Fetched the searched rooms",
+            rooms: rooms
+        })
+    }catch(e){
+        return res.status(500).json({
+            message: "Searching Rooms Error",
+            error: e
+        })
+    }
+})
+
 export default roomRouter;
