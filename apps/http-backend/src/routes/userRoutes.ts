@@ -19,6 +19,30 @@ userRouter.post('/signup',async (req,res)=>{
             })
         }
 
+        const userNameExists = await prismaClient.user.findFirst({
+            where:{
+                username: parsedBody.data.username
+            }
+        })
+
+        if(userNameExists){
+            return res.status(400).json({
+                message: "Username already taken"
+            })
+        }
+
+        const emailExists = await prismaClient.user.findFirst({
+            where:{
+                email: parsedBody.data.email
+            }
+        })
+
+        if(emailExists){
+            return res.status(400).json({
+                message: "Email already in use"
+            })
+        }
+
         const hashedPassword = await bcrypt.hash(parsedBody.data.password,5);
 
         await prismaClient.user.create({

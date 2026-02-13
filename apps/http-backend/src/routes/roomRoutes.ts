@@ -17,6 +17,18 @@ roomRouter.post('/create',userMiddleware,async (req,res)=>{
                 error:parsedBody.error
             })
         }
+
+        const roomExists = await prismaClient.room.findFirst({
+            where:{
+                slug: parsedBody.data.slug
+            }
+        })
+
+        if(roomExists){
+            return res.status(400).json({
+                message: "Room with this name already exists"
+            })
+        }
         
         const room = await prismaClient.room.create({
             data:{

@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import InputField from "./InputField";
 import UserIcon from "../icons/UserIcon";
 import MailIcon from "../icons/Mail-Icon";
@@ -17,20 +17,41 @@ export default function AuthForm({ type }:{ type: string }){
     const emailRef = useRef<HTMLInputElement>(null);
     const router = useRouter();
     const [loading,setLoading] = useState(false);
+    const [message,setMessage] = useState<string>();
+
+    useEffect(()=>{
+        const token = document.cookie.split(';').slice(-1)[0];
+        if(token?.includes('token')){
+            router.push('/dashboard');
+        }
+    },[]);
 
     async function signUpHandler(){
         try{
+            if(!usernameRef.current?.value || !passwordRef.current?.value || !emailRef.current?.value){
+                setMessage("Must fill all fields");
+                return
+            }
             setLoading(true);
+            setMessage('');
             const response = await axios.post(`${BACKEND_URL}/api/v1/user/signup`,
                 {
                     username: usernameRef.current?.value,
                     password: passwordRef.current?.value,
                     email: emailRef.current?.value
+                },
+                {
+                    validateStatus: status => status >= 200 && status <= 500
                 }
             )
-            //@ts-ignore
-            console.log(response.data.message);
-            router.push('/login');
+            
+            if(response.status == 200){
+                setMessage('');
+                router.push('/login');
+            } else {
+                setMessage(response.data.message);
+            }
+            setLoading(false);
         } catch(e){
             console.log('Signup request error: '+e);
         }
@@ -38,19 +59,31 @@ export default function AuthForm({ type }:{ type: string }){
     
     async function logInHandler(){
         try{
+            if(!usernameRef.current?.value || !passwordRef.current?.value){
+                setMessage("Must fill all fields");
+                return
+            }
             setLoading(true);
+            setMessage('');
             const response = await axios.post(`${BACKEND_URL}/api/v1/user/login`,
                 {
                     username: usernameRef.current?.value,
                     password: passwordRef.current?.value
                 },
                 {
-                    withCredentials: true
+                    withCredentials: true,
+                    validateStatus: status => status >= 200 && status <= 500
                 }
             )
-            //@ts-ignore
-            console.log(response.data.message);
-            router.push('/dashboard');
+
+            if(response.status == 200){
+                setMessage('');
+                router.push('/dashboard');
+            } else {
+                setMessage(response.data.message);
+            }
+            setLoading(false);
+
         } catch(e){
             console.log('LogIn request error: '+e);
         }
@@ -67,6 +100,7 @@ export default function AuthForm({ type }:{ type: string }){
             <div className="w-full px-3">
                 {!loading&&<Button text={"Submit"} variant={"primary"} size={"full"} onClickHandler={(type=='signup')?signUpHandler:logInHandler} disabledState={loading} />}
                 {loading&&<p className="text-center">Loading . . .</p>}
+                {message&&<p className="text-center text-red-500 mt-2">{message}</p>}
             </div>
         </div>  
     )

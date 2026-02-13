@@ -11,7 +11,7 @@ interface ButtonProps {
   icon?: ReactElement
 }
 
-const defaultStyles = "flex items-center justify-between gap-2 text-lg border border-dark-cream cursor-pointer shadow-lg";
+const defaultStyles = "flex items-center justify-center gap-2 text-lg border border-dark-cream cursor-pointer shadow-lg";
 
 const customStyles = {
   "primary": "bg-dark-cream text-white hover:text-dark-cream hover:bg-white",
