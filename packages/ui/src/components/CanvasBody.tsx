@@ -39,11 +39,14 @@ export default function CanvasBody({ roomId, ws }:{
             <div className="fixed top-4 left-10">
                 <Button text={"Back"} variant={"secondary"} size={"fit"} icon={<LeftArrowIcon />} onClickHandler={()=>router.push('/dashboard')}/>
             </div>
-            <div className="fixed top-3 left-170 border-2 border-dark-cream rounded-md bg-white flex justify-center items-center gap-2 p-3 shadow-xl">
+            <div className="fixed top-3 left-170 border-1 border-dark-cream rounded-md bg-white flex justify-center items-center gap-2 p-3 shadow-xl">
                 <ToolButton icon={<MousePointer />} selected={tool == 'None'} onClickHandler={()=>setTool('None')} />
                 <ToolButton icon={<Slash />} selected={tool == 'Line'} onClickHandler={()=>setTool('Line')} />
                 <ToolButton icon={<RectangleHorizontal />} selected={tool == 'Rectangle'} onClickHandler={()=>setTool('Rectangle')} />
                 <ToolButton icon={<Circle />} selected={tool == 'Circle'} onClickHandler={()=>setTool('Circle')} />
+            </div>
+            <div className="fixed top-5 left-220">
+                <Button text={"Clear"} variant={"secondary"} size={"fit"} onClickHandler={()=>draw?.deleteShapes()}/>
             </div>
             <canvas ref={canvasRef} height={window.innerHeight} width={window.innerWidth} />
         </div>

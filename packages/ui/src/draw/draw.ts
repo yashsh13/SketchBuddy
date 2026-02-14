@@ -1,4 +1,4 @@
-import { getExistingShapes } from "./http";
+import { getExistingShapes, deleteExistingShapes } from "./http";
 
 type Tool = 'None' | 'Line' |'Rectangle' | "Circle";
 
@@ -182,6 +182,12 @@ export default class Draw {
 
     setTool(tool: Tool){
         this.tool = tool;
+    }
+
+    deleteShapes(){
+        deleteExistingShapes(this.roomId);
+        this.existingShapes = [];
+        this.clearCanvas();
     }
     
 }

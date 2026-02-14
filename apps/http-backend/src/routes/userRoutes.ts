@@ -147,4 +147,17 @@ userRouter.get('/name', userMiddleware, async (req,res)=>{
     }
 })
 
+userRouter.delete('/logout', userMiddleware, (req,res)=>{
+    try{
+        return res.clearCookie('token').json({
+            message: "Successfully logged out"
+        })
+    }catch(e){
+        return res.status(500).json({
+            message: "Error in logging out",
+            error: e
+        })
+    }
+})
+
 export default userRouter;
