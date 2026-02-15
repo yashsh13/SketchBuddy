@@ -6,7 +6,6 @@ import { cookies } from 'next/headers';
 import LogInRedirect from "./LogInRedirect";
 
 export default async function SideBar(){
-
     try{
         const cookieStore = await cookies();
 
@@ -30,5 +29,4 @@ export default async function SideBar(){
     }catch (e){
         return <LogInRedirect />
     }
-
 }
