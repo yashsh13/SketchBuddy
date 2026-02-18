@@ -20,4 +20,4 @@ app.use('/api/v1/user',userRouter);
 app.use('/api/v1/room',roomRouter);
 app.use('/api/v1/chat',chatRouter);
 
-app.listen(3001);
+app.listen(3001,()=>console.log("Running on port 3001"));

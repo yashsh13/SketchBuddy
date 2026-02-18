@@ -8,10 +8,10 @@ export default function WSConnect({ roomId }:{
 }){
     const [ws,setWS] = useState<WebSocket | null>(null);
 
-    async function connectWS(){
-        const token = await cookieStore.get('token');
+    function connectWS(){
+        const token = document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1];
         
-        const ws = new WebSocket(`${WS_URL}?token=${(token?.value)?.split('%20')[1]}`);
+        const ws = new WebSocket(`${WS_URL}?token=${token}`);
 
         ws.onopen = (event)=>{
                     setWS(ws);
